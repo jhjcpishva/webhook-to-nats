@@ -1,10 +1,12 @@
 import logging
+from io import BytesIO
 
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 
 import config
 from messenger_client import MessengerClient
+from kokoro_fastapi_client import KokoroFastAPIClient
 
 logger = logging.getLogger('uvicorn.app')
 logger.setLevel(logging.DEBUG)
@@ -16,6 +18,8 @@ messenger_client = MessengerClient(
     access_token=config.PAGE_ACCESS_TOKEN,
     logger=logger
 )
+
+tts_client = KokoroFastAPIClient(logger=logger)
 
 
 @app.get("/webhook")
@@ -43,13 +47,22 @@ async def handle_webhook(request: Request):
                     text = message_event["message"]["text"]
                     # await messenger_client.send_text_message(sender_id, f"Echo: {text}")
                     try:
+                        # res = await messenger_client.send_attachment(
+                        #     recipient_id=sender_id,
+                        #     filename="meow_praise.png",
+                        #     file=open("path/to/image.png", "rb"),
+                        #     attachment_type="image",
+                        #     mime_type="image/png",
+                        # )
+                        res_tts = await tts_client.collect_tts(text)
                         res = await messenger_client.send_attachment(
                             recipient_id=sender_id,
-                            filename="meow_praise.png",
-                            file=open("path/to/image.png", "rb"),
-                            attachment_type="image",
-                            mime_type="image/png",
+                            filename="speech.mp3",
+                            file=BytesIO(res_tts.content),
+                            attachment_type="audio",
+                            mime_type="audio/mpeg",
                         )
+
                     except Exception as e:
                         logger.exception(e)
     return "ok", 200
