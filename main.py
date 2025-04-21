@@ -20,6 +20,7 @@ async def send_payload(payload: dict):
     async with httpx.AsyncClient() as client:
         res = await client.post(url, params=params, json=payload, headers=headers)
         logger.debug(f"💧 Sent Response: {res.status_code!r}, {res.text!r}", )
+    return res
 
 
 async def send_text_message(recipient_id, text):
@@ -44,19 +45,18 @@ async def verify_webhook(request: Request):
 async def handle_webhook(request: Request):
     logger.debug("Received a POST request")
     logger.debug(f"Request body: {await request.json()}")
-    
+
     data = await request.json()
-    
+
     if "entry" in data:
         for entry in data["entry"]:
             messaging = entry.get("messaging", [])
             for message_event in messaging:
                 sender_id = message_event["sender"]["id"]
                 if "message" in message_event and "text" in message_event["message"]:
-                    text = message_event["message"]["text"].strip().lower()
+                    text = message_event["message"]["text"]
                     await send_text_message(sender_id, f"Echo: {text}")
 
-                
     return "ok", 200
 
 
