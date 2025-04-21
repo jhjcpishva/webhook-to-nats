@@ -17,7 +17,7 @@ class KokoroFastAPIClient:
                 "voice": "af_sky",
                 "response_format": "mp3",
                 "speed": 1,
-            })
+            }, timeout=None)
             self.logger.debug(
                 f"💬 TTS Response: {res.status_code!r}", )
             return res
