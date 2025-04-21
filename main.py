@@ -1,5 +1,4 @@
 import logging
-import httpx
 
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
@@ -42,8 +41,17 @@ async def handle_webhook(request: Request):
                 sender_id = message_event["sender"]["id"]
                 if "message" in message_event and "text" in message_event["message"]:
                     text = message_event["message"]["text"]
-                    await messenger_client.send_text_message(sender_id, f"Echo: {text}")
-
+                    # await messenger_client.send_text_message(sender_id, f"Echo: {text}")
+                    try:
+                        res = await messenger_client.send_attachment(
+                            recipient_id=sender_id,
+                            filename="meow_praise.png",
+                            file=open("path/to/image.png", "rb"),
+                            attachment_type="image",
+                            mime_type="image/png",
+                        )
+                    except Exception as e:
+                        logger.exception(e)
     return "ok", 200
 
 
