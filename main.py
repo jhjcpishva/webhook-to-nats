@@ -5,6 +5,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
 
 import config
+from messenger_client import MessengerClient
 
 logger = logging.getLogger('uvicorn.app')
 logger.setLevel(logging.DEBUG)
@@ -12,24 +13,10 @@ logger.setLevel(logging.DEBUG)
 
 app = FastAPI(debug=True)
 
-
-async def send_payload(payload: dict):
-    url = "https://graph.facebook.com/v22.0/me/messages"
-    params = {"access_token": config.PAGE_ACCESS_TOKEN}
-    headers = {"Content-Type": "application/json"}
-    async with httpx.AsyncClient() as client:
-        res = await client.post(url, params=params, json=payload, headers=headers)
-        logger.debug(f"💧 Sent Response: {res.status_code!r}, {res.text!r}", )
-    return res
-
-
-async def send_text_message(recipient_id, text):
-    payload = {
-        "recipient": {"id": recipient_id},
-        "message": {"text": text},
-        "messaging_type": "RESPONSE"
-    }
-    return await send_payload(payload)
+messenger_client = MessengerClient(
+    access_token=config.PAGE_ACCESS_TOKEN,
+    logger=logger
+)
 
 
 @app.get("/webhook")
@@ -55,7 +42,7 @@ async def handle_webhook(request: Request):
                 sender_id = message_event["sender"]["id"]
                 if "message" in message_event and "text" in message_event["message"]:
                     text = message_event["message"]["text"]
-                    await send_text_message(sender_id, f"Echo: {text}")
+                    await messenger_client.send_text_message(sender_id, f"Echo: {text}")
 
     return "ok", 200
 
