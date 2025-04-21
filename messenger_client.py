@@ -35,6 +35,7 @@ class MessengerClient:
             raise ValueError(f"Invalid attachment type: {attachment_type}")
 
         data = {
+            "recipient": json.dumps({"id": recipient_id}),
             "message": json.dumps({
                 "attachment": {
                     "type": attachment_type,
@@ -43,7 +44,7 @@ class MessengerClient:
                     }
                 }
             }),
-            "recipient": json.dumps({"id": recipient_id}),
+            "messaging_type": "RESPONSE"
         }
         files = {
             "filedata": (filename, file, mime_type),
