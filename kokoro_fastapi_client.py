@@ -5,9 +5,9 @@ import config
 
 class KokoroFastAPIClient:
     def __init__(self, logger: Logger):
-        self.base_url = config.KOKORO_FAST_API_HOST
         self.logger = logger
-        self.verify_ssl = not config.KOKORO_FAST_API_IGNORE_SSL
+        self.base_url = config.KOKORO_FAST_API_HOST
+        self.verify_ssl = config.KOKORO_FAST_API_VERIFY_SSL
 
     async def collect_tts(self, text: str):
         async with httpx.AsyncClient(verify=self.verify_ssl) as client:
