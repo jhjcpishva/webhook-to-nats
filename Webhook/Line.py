@@ -1,9 +1,8 @@
 import logging
+import asyncio
 
 from fastapi import FastAPI, Request, APIRouter
 from fastapi.responses import PlainTextResponse
-
-import config
 from fastapi import Header, HTTPException
 from linebot.v3 import WebhookHandler
 from linebot.v3.webhooks import MessageEvent, TextMessageContent
@@ -11,9 +10,10 @@ from linebot.v3.messaging import (
     AsyncMessagingApi,
     Configuration,
     ApiClient,
-    ReplyMessageRequest,
-    TextMessage
 )
+
+import config
+import nats_client
 
 
 logger = logging.getLogger('uvicorn.app')
@@ -45,17 +45,12 @@ configuration = Configuration(access_token=config.LINE_CHANNEL_ACCESS_TOKEN)
 line_bot_api = AsyncMessagingApi(ApiClient(configuration))
 
 
-@handler.add(MessageEvent, message=TextMessageContent)
-async def handle_text_message(event):
-    """Echo the text message back to the user."""
-    try:
-        logger.debug(f"Received message: {event.message.text}")
-        result = await line_bot_api.reply_message(
-            ReplyMessageRequest(
-                reply_token=event.reply_token,
-                messages=[TextMessage(text=event.message.text)],
-            )
-        )
-        logger.debug(f"Reply result: {result}")
-    except Exception:
-        logger.exception("Failed to reply message")
+@handler.add(MessageEvent)
+def handle_message(__event: MessageEvent):
+    async def __handle(event: MessageEvent):
+        nc = await nats_client.NatsClient.get_instance(logger)
+        subject = f"{config.LINE_NATS_SUBJECT_PREFIX}.message"
+        await nc.publish(subject, event.to_json().encode("utf-8"))
+        await nc.flush()
+
+    asyncio.get_event_loop().create_task(__handle(__event))
