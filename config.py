@@ -14,4 +14,7 @@ LINE_WEBHOOK_ENDPOINT = os.getenv("LINE_WEBHOOK_ENDPOINT", "/webhook")
 KOKORO_FAST_API_HOST = os.getenv("KOKORO_FAST_API_HOST")
 KOKORO_FAST_API_VERIFY_SSL = os.getenv("KOKORO_FAST_API_IGNORE_SSL", "true").strip().lower() == "false"
 
+NATS_HOST = os.getenv("NATS_HOST", "localhost")
+NATS_PORT = int(os.getenv("NATS_PORT", "4222"))
+
 PORT = int(os.getenv("PORT", "8000"))
