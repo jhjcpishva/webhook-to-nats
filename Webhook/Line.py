@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request, APIRouter
 from fastapi.responses import PlainTextResponse
 from fastapi import Header, HTTPException
 from linebot.v3 import WebhookHandler
-from linebot.v3.webhooks import MessageEvent, TextMessageContent
+from linebot.v3.webhooks import MessageEvent, FollowEvent, UnfollowEvent, TextMessageContent
 from linebot.v3.messaging import (
     AsyncMessagingApi,
     Configuration,
@@ -50,6 +50,26 @@ def handle_message(__event: MessageEvent):
     async def __handle(event: MessageEvent):
         nc = await nats_client.NatsClient.get_instance(logger)
         subject = f"{config.LINE_NATS_SUBJECT_PREFIX}.message"
+        await nc.publish(subject, event.to_json().encode("utf-8"))
+        await nc.flush()
+
+    asyncio.get_event_loop().create_task(__handle(__event))
+
+@handler.add(FollowEvent)
+def handle_follow(__event: FollowEvent):
+    async def __handle(event: FollowEvent):
+        nc = await nats_client.NatsClient.get_instance(logger)
+        subject = f"{config.LINE_NATS_SUBJECT_PREFIX}.follow"
+        await nc.publish(subject, event.to_json().encode("utf-8"))
+        await nc.flush()
+
+    asyncio.get_event_loop().create_task(__handle(__event))
+
+@handler.add(UnfollowEvent)
+def handle_unfollow(__event: UnfollowEvent):
+    async def __handle(event: UnfollowEvent):
+        nc = await nats_client.NatsClient.get_instance(logger)
+        subject = f"{config.LINE_NATS_SUBJECT_PREFIX}.unfollow"
         await nc.publish(subject, event.to_json().encode("utf-8"))
         await nc.flush()
 
