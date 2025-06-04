@@ -8,7 +8,7 @@ from fastapi import Header, HTTPException
 from linebot.v3 import WebhookHandler
 from linebot.v3.webhooks import MessageEvent, TextMessageContent
 from linebot.v3.messaging import (
-    MessagingApi,
+    AsyncMessagingApi,
     Configuration,
     ApiClient,
     ReplyMessageRequest,
@@ -42,15 +42,15 @@ async def line_webhook(
 # LINE Messaging API setup
 handler = WebhookHandler(config.LINE_CHANNEL_SECRET)
 configuration = Configuration(access_token=config.LINE_CHANNEL_ACCESS_TOKEN)
-line_bot_api = MessagingApi(ApiClient(configuration))
+line_bot_api = AsyncMessagingApi(ApiClient(configuration))
 
 
 @handler.add(MessageEvent, message=TextMessageContent)
-def handle_text_message(event):
+async def handle_text_message(event):
     """Echo the text message back to the user."""
     try:
         logger.debug(f"Received message: {event.message.text}")
-        result = line_bot_api.reply_message(
+        result = await line_bot_api.reply_message(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
                 messages=[TextMessage(text=event.message.text)],
