@@ -17,7 +17,7 @@ router = APIRouter()
 
 
 messenger_client = MessengerClient(
-    access_token=config.PAGE_ACCESS_TOKEN,
+    access_token=config.MESSENGER_PAGE_ACCESS_TOKEN,
     logger=logger
 )
 
@@ -37,16 +37,16 @@ async def call_llm(text: str):
     return response.message.content
 
 
-@router.get("/webhook")
+@router.get(config.MESSENGER_WEBHOOK_ENDPOINT)
 async def verify_webhook(request: Request):
     hub_verify_token = request.query_params.get("hub.verify_token")
     hub_challenge = request.query_params.get("hub.challenge")
-    if hub_verify_token == config.VERIFY_TOKEN:
+    if hub_verify_token == config.MESSENGER_VERIFY_TOKEN:
         return PlainTextResponse(hub_challenge, status_code=200)
     return "Invalid verification token", 403
 
 
-@router.post("/webhook")
+@router.post(config.MESSENGER_WEBHOOK_ENDPOINT)
 async def handle_webhook(request: Request):
     logger.debug("Received a POST request")
     logger.debug(f"Request body: {await request.json()}")

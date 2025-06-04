@@ -10,8 +10,8 @@ logger.setLevel(logging.DEBUG)
 
 
 app = FastAPI(debug=True)
-app.include_router(fb_router, prefix="/messenger", tags=["messenger"])
-
+app.include_router(
+    fb_router, prefix=config.MESSENGER_WEBHOOK_PREFIX, tags=["messenger"])
 
 
 if __name__ == "__main__":
