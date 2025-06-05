@@ -4,10 +4,10 @@
 
 - Relays webhook request to NATS server for messaging services such as Messenger, Line.
 - Webhook content will be published to NATS subject such as:
-  - `MESSENGER_NATS_SUBJECT_PREFIX` (default: `webhook.messenger`)
+  - `MESSENGER_NATS_SUBJECT_PREFIX` (default: `webhook.messenger`) + `<event>`
     - example:
       - `webhook.messenger.message`
-  - `LINE_NATS_SUBJECT_PREFIX` (default: `webhook.line`)
+  - `LINE_NATS_SUBJECT_PREFIX` (default: `webhook.line`) + `<event>`
     - example:
       - `webhook.line.message`
       - `webhook.line.follow`
@@ -16,7 +16,7 @@
 ## .env
 
 ```.env
-# Use webhook
+# Enable webhook
 WEBHOOK_USE_MESSENGER=true
 WEBHOOK_USE_LINE=true
 
@@ -28,7 +28,7 @@ MESSENGER_WEBHOOK_ENDPOINT=/webhook
 # webhook will be published to webhook.messenger.message
 MESSENGER_NATS_SUBJECT_PREFIX=webhook.messenger
 
-# Messenger webhook url: https://example.com/line/webhook
+# LINE Messaging webhook url: https://example.com/line/webhook
 LINE_CHANNEL_ACCESS_TOKEN=...
 LINE_CHANNEL_SECRET=...
 LINE_WEBHOOK_PREFIX=/line
@@ -71,12 +71,9 @@ services:
 
 ```
 
-Note: Watch published messages
+## Debug – watch the messages
 
-```sh
-# subscribe messages under "webhook."
-docker run \
-    -it --rm --net=host \
-    natsio/nats-box:latest \
-    nats -s nats://localhost:4222 sub "webhook.>"
+```bash
+docker run -it --rm --net=host natsio/nats-box:latest \
+  nats -s nats://localhost:4222 sub "webhook.>"
 ```
