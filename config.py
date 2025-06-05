@@ -1,6 +1,9 @@
 import os
 
 
+WEBHOOK_USE_MESSENGER = os.getenv("WEBHOOK_USE_MESSENGER", "false").strip().lower() == "true"
+WEBHOOK_USE_LINE = os.getenv("WEBHOOK_USE_LINE", "false").strip().lower() == "true"
+
 MESSENGER_VERIFY_TOKEN = os.getenv("MESSENGER_VERIFY_TOKEN")
 MESSENGER_PAGE_ACCESS_TOKEN = os.getenv("MESSENGER_PAGE_ACCESS_TOKEN")
 MESSENGER_WEBHOOK_PREFIX = os.getenv("MESSENGER_WEBHOOK_PREFIX", "/messenger")
