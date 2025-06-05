@@ -1,5 +1,5 @@
 [project]
-name = "practice-fb-messaging-bot"
+name = "webhook-to-nats"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
