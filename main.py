@@ -11,14 +11,14 @@ logger.setLevel(logging.DEBUG)
 app = FastAPI(debug=True)
 
 if config.WEBHOOK_USE_LINE:
-    from Webhook.Line import router as line_router
+    from Webhook.Line import router
     app.include_router(
-        line_router, prefix=config.MESSENGER_WEBHOOK_PREFIX, tags=["messenger"])
+        router, prefix=config.LINE_WEBHOOK_PREFIX, tags=["line"])
 
 if config.WEBHOOK_USE_MESSENGER:
-    from Webhook.FacebookMessenger import router as fb_router
+    from Webhook.FacebookMessenger import router
     app.include_router(
-        fb_router, prefix=config.LINE_WEBHOOK_PREFIX, tags=["line"])
+        router, prefix=config.MESSENGER_WEBHOOK_PREFIX, tags=["messenger"])
 
 
 if __name__ == "__main__":
