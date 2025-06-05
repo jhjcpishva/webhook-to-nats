@@ -6,9 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.115.12",
-    "httpx>=0.28.1",
     "line-bot-sdk>=3.17.1",
     "nats-py>=2.10.0",
-    "ollama>=0.4.8",
     "uvicorn>=0.34.2",
 ]
