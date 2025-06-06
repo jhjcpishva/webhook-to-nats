@@ -1,0 +1,22 @@
+import os
+
+
+WEBHOOK_USE_MESSENGER = os.getenv("WEBHOOK_USE_MESSENGER", "false").strip().lower() == "true"
+WEBHOOK_USE_LINE = os.getenv("WEBHOOK_USE_LINE", "false").strip().lower() == "true"
+
+MESSENGER_VERIFY_TOKEN = os.getenv("MESSENGER_VERIFY_TOKEN")
+MESSENGER_PAGE_ACCESS_TOKEN = os.getenv("MESSENGER_PAGE_ACCESS_TOKEN")
+MESSENGER_WEBHOOK_PREFIX = os.getenv("MESSENGER_WEBHOOK_PREFIX", "/messenger")
+MESSENGER_WEBHOOK_ENDPOINT = os.getenv("MESSENGER_WEBHOOK_ENDPOINT", "/webhook")
+MESSENGER_NATS_SUBJECT_PREFIX = os.getenv("MESSENGER_NATS_SUBJECT", "webhook.messenger")
+
+LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
+LINE_CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET")
+LINE_WEBHOOK_PREFIX = os.getenv("LINE_WEBHOOK_PREFIX", "/line")
+LINE_WEBHOOK_ENDPOINT = os.getenv("LINE_WEBHOOK_ENDPOINT", "/webhook")
+LINE_NATS_SUBJECT_PREFIX = os.getenv("LINE_NATS_SUBJECT", "webhook.line")
+
+NATS_HOST = os.getenv("NATS_HOST", "localhost")
+NATS_PORT = int(os.getenv("NATS_PORT", "4222"))
+
+PORT = int(os.getenv("PORT", "8000"))
