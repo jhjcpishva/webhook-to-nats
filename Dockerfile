@@ -1,15 +1,12 @@
-FROM python:3.13-slim
-LABEL org.opencontainers.image.source="https://github.com/jhjcpishva/webhook-to-nats"
+# Build stage
+FROM golang:1.24 AS builder
+WORKDIR /src
+COPY go.mod .
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 go build -o /bin/webhook-to-nats
 
-# Install uv.
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
-
-# Copy the application into the container.
-COPY . /app
-
-# Install the application dependencies.
-WORKDIR /app
-RUN uv sync --frozen --no-cache
-
-# Run the application.
-CMD ["uv", "run", "main.py"]
+# Final stage
+FROM scratch
+COPY --from=builder /bin/webhook-to-nats /webhook-to-nats
+ENTRYPOINT ["/webhook-to-nats"]
