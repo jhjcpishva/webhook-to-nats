@@ -50,27 +50,12 @@ docker run \
 
 ### Docker Compose (development)
 
-```yaml
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    env_file:
-      - .env
-    ports:
-      - "8000:8000"
-    develop:
-      watch:
-        - action: sync
-          path: .
-          target: /app
-        - action: rebuild
-          path: go.mod
-  nats-server:
-    image: nats:latest
-    ports:
-      - "4222:4222"
+The file `compose.dev.yml` contains a ready-to-use setup for development. It
+uses [air](https://github.com/cosmtrek/air) inside the container for hot
+reload.
+
+```sh
+docker compose -f compose.dev.yml up --build
 ```
 
 ## Debug – watch the messages
