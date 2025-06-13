@@ -1,11 +1,7 @@
-# Python-generated files
-__pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
+# Go build artifacts
+bin/
+webhook-to-nats
+*.exe
 
-# Virtual environments
-.venv
+# Environment files
 .env
