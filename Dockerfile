@@ -13,6 +13,7 @@ RUN uv pip install --system --no-cache --requirements uv.lock
 
 # final runtime image
 FROM python:3.13-alpine
+LABEL org.opencontainers.image.source="https://github.com/jhjcpishva/webhook-to-nats"
 WORKDIR /app
 
 # copy installed dependencies, excluding the uv binary
