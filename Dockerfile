@@ -8,8 +8,8 @@ WORKDIR /app
 # copy project metadata for dependency installation
 COPY pyproject.toml uv.lock ./
 
-# install dependencies into the system location
-RUN uv pip install --system --no-cache --requirements uv.lock
+# install dependencies into the system location based on the project
+RUN uv pip install --system --no-cache -r pyproject.toml
 
 # final runtime image
 FROM python:3.13-alpine
